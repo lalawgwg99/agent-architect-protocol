@@ -1,0 +1,26 @@
+{
+  "name": "agent-architect-protocol",
+  "version": "2.1.0",
+  "description": "The Sovereign Agent OS: Identity Governance, Autonomous Loops, and Capital Amplifier Protocols.",
+  "main": "core/Agent.js",
+  "scripts": {
+    "start": "node demo.js",
+    "deploy": "./deploy.sh",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "agent",
+    "ai",
+    "protocol",
+    "autonomous",
+    "swarm"
+  ],
+  "author": "UUZero (for JazzX)",
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.12.0",
+    "@google/genai": "^0.1.0",
+    "dotenv": "^16.3.1",
+    "pm2": "^5.3.0"
+  }
+}
