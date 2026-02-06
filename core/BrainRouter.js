@@ -1,14 +1,14 @@
-const { GoogleGenAI } = require("@google/genai");
-const Anthropic = require("@anthropic-ai/sdk");
-const fs = require('fs');
-const path = require('path');
+import { GoogleGenAI } from "@google/genai";
+import Anthropic from "@anthropic-ai/sdk";
+import fs from 'fs';
+import path from 'path';
 
 /**
- * Real Brain Router Implementation
+ * Real Brain Router Implementation (ESM)
  * Handles cognitive switching between L1 (Gemini) and L2 (Claude).
  */
 
-class BrainRouter {
+export default class BrainRouter {
   constructor(config = {}) {
     // Load keys from env
     this.geminiKey = process.env.GEMINI_API_KEY;
@@ -31,10 +31,7 @@ class BrainRouter {
     return await this.callL1(prompt, context);
   }
 
-  // Heuristic-based complexity scoring (Fast L1 logic)
   async estimateComplexity(prompt) {
-    // In a real production system, we could use a tiny model to classify this.
-    // Here we use regex heuristics for <10ms latency.
     let score = 0.2;
     if (prompt.length > 500) score += 0.3;
     if (/code|function|class|api|debug/i.test(prompt)) score += 0.3;
@@ -74,14 +71,12 @@ class BrainRouter {
       };
     } catch (e) {
       console.error("L2 Failed:", e.message);
-      // Fallback to L1 if L2 fails
       console.log("⚠️ Fallback to L1...");
       return this.callL1(prompt, context);
     }
   }
 
   _buildSystemPrompt(context) {
-    // Inject SOUL if available
     let soul = "";
     if (context.soulPath && fs.existsSync(context.soulPath)) {
       soul = fs.readFileSync(context.soulPath, 'utf8');
@@ -89,5 +84,3 @@ class BrainRouter {
     return `[SYSTEM IDENTITY]\n${soul}\n\n[TASK]\n`;
   }
 }
-
-module.exports = BrainRouter;

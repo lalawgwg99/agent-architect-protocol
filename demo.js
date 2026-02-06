@@ -1,7 +1,11 @@
-const Agent = require('./core/Agent');
+import Agent from './core/Agent.js';
+import dotenv from 'dotenv';
+
+// Load env vars
+dotenv.config();
 
 /**
- * The Proof of Concept Demo
+ * The Proof of Concept Demo (ESM)
  * Run this to see the Sovereign Agent think, route, and act.
  */
 
@@ -14,9 +18,9 @@ async function main() {
   });
 
   const tasks = [
-    "Hello! Who are you?", // Simple task -> L1
-    "Analyze the structural advantage of using a decentralized identity protocol for AI agents. Provide a strategic breakdown.", // Complex task -> L2
-    "Write a Python script to calculate Fibonacci sequence." // Code task -> L1/L2
+    "Hello! Who are you?",
+    "Analyze the structural advantage of using a decentralized identity protocol for AI agents.",
+    "Write a Python script to calculate Fibonacci sequence."
   ];
 
   for (const task of tasks) {

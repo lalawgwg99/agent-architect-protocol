@@ -1,48 +1,48 @@
-const BrainRouter = require('./BrainRouter');
-const fs = require('fs');
-const path = require('path');
-
-/**
- * The Sovereign Agent Entity
- * Integrates Soul, Brain, and Memory into a functional worker.
- */
+require('dotenv').config();
+const { routeRequest } = require('./router');
 
 class Agent {
   constructor(config = {}) {
-    this.id = config.id || "agent-01";
-    this.role = config.role || "Generalist";
-    this.brain = new BrainRouter(config.routerConfig);
+    this.id = config.id || 'sovereign-agent';
+    this.role = config.role || 'Generalist';
     this.memory = [];
-    
-    // Load SOUL (Identity Protocol)
-    this.soulPath = config.soulPath || path.join(__dirname, '../protocols/identity.yaml');
-    if (!fs.existsSync(this.soulPath)) {
-      console.warn("⚠️ No SOUL found. Agent running in stateless mode.");
-    }
+    this.soul = config.soul || null;
   }
 
   async process(input) {
-    console.log(`\n[${this.role}] Processing input: "${input.substring(0, 50)}..."`);
-    
-    // 1. Context Hydration
-    const context = {
-      soulPath: this.soulPath,
-      history: this.memory.slice(-5) // Short-term memory window
-    };
+    console.log(` [${this.role}] 處理輸入: "${input.substring(0, 50)}..."`);
 
-    // 2. Cognitive Routing (Brain)
-    const result = await this.brain.route(input, context);
+    try {
+      const result = await routeRequest(input, { 
+        agentId: this.id, 
+        role: this.role, 
+        history: this.memory 
+      });
+      
+      // 儲存到記憶
+      this.memory.push({
+        input,
+        output: result.response,
+        model: result.model,
+        timestamp: Date.now()
+      });
 
-    // 3. Memory Consolidation
-    this.memory.push({ role: 'user', content: input });
-    this.memory.push({ role: 'assistant', content: result.output });
+      return { 
+        model_used: result.model, 
+        output: result.response 
+      };
+    } catch (error) {
+      console.error(`[${this.role}] 錯誤:`, error.message);
+      throw error;
+    }
+  }
 
-    return {
-      agent_id: this.id,
-      model_used: result.model,
-      output: result.output,
-      timestamp: Date.now()
-    };
+  getMemory() {
+    return this.memory;
+  }
+
+  clearMemory() {
+    this.memory = [];
   }
 }
 
